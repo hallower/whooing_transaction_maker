@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'splash_page.dart';
 import 'main_page.dart';
+import 'whooing_signin_page.dart';
 
 void main() {
   runApp(WimpleApp());
@@ -17,13 +18,10 @@ class WimpleApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        //'/': (context) => SplashPage(),
-        '/': (context) => MainPage(),
-        '/home' : (context) => MainPage(),
+        '/': (context) => SplashPage(),
+        //'/': (context) => MainPage(),
+        '/home': (context) => MainPage(),
       },
     );
   }
 }
-
-
-
