@@ -1,9 +1,12 @@
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
-enum SigninStatus { not, gotTempToken, signined, gotAccessToken }
+import 'package:whooing_transaction_maker/models/signin_state_model.dart';
 
 class WhooingAuth {
   static final WhooingAuth _instance = WhooingAuth._internal();
@@ -16,28 +19,23 @@ class WhooingAuth {
   final urlRequestToken = "https://whooing.com/app_auth/request_token";
   final urlAccessToken = "https://whooing.com/app_auth/access_token";
 
-  bool isAuthed;
   String tempToken;
   String _pin;
   String _token;
   String _tokenSecret;
   String userID;
   Random _rnd = Random();
-  SigninStatus status;
 
   factory WhooingAuth() {
     return _instance;
   }
 
   WhooingAuth._internal() {
-    // TODO : check access token and set as isAuthed=true
-    isAuthed = false;
     tempToken = "";
     _pin = "";
     _token = "";
     _tokenSecret = "";
     userID = "";
-    status = SigninStatus.not;
   }
 
   String _getRandomString(int length) => String.fromCharCodes(Iterable.generate(
@@ -46,8 +44,8 @@ class WhooingAuth {
   String _xapiKey() =>
       "app_id=$appID,token=$_token,nounce=${_getRandomString(10)},timestamp=${DateTime.now().millisecondsSinceEpoch},signiture=${sha1.convert(utf8.encode('$asozmqpMVi|$_tokenSecret'))}";
 
-  Future<bool> fetchToken() async {
-    if (isAuthed) {
+  Future<bool> prepareSignIn(BuildContext context) async {
+    if (Provider.of<SigninStatusModel>(context).status == SigninStatus.SignedIn) {
       print("Already Authed!!!");
       return true;
     }
@@ -66,7 +64,7 @@ class WhooingAuth {
       tempToken = body["token"];
 
       print("_tempToken = $tempToken");
-      status = SigninStatus.gotTempToken;
+      Provider.of<SigninStatusModel>(context).changeStatus(SigninStatus.NeedSignInPage);
       return true;
     } else {
       print(
@@ -75,14 +73,14 @@ class WhooingAuth {
     }
   }
 
-  void setPin(String pin){
+  void setPin(BuildContext context, String pin){
     this._pin = pin;
-    status = SigninStatus.signined;
     print('Pin = $pin');
+    Provider.of<SigninStatusModel>(context).changeStatus(SigninStatus.SignInInProgress);
   }
 
-  Future<bool> fetchAccessToken() async {
-    if (isAuthed) {
+  Future<bool> completeSignIn(BuildContext context) async {
+    if (Provider.of<SigninStatusModel>(context).status == SigninStatus.SignedIn) {
       print("Already Authed!!!");
       return true;
     }
@@ -104,7 +102,7 @@ class WhooingAuth {
       _tokenSecret = body["token_secret"];
       userID = body["user_id"];
 
-      status = SigninStatus.gotAccessToken;
+      Provider.of<SigninStatusModel>(context).changeStatus(SigninStatus.SignedIn);
 
       // TODO : store token to secure storage
 

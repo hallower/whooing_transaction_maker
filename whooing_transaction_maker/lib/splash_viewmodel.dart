@@ -1,3 +1,0 @@
-class SplashViewModel /* extends ChangeNotifier*/{
-
-}

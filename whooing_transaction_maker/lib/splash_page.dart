@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:whooing_transaction_maker/models/signin_state_model.dart';
 import 'package:whooing_transaction_maker/whooing_auth.dart';
 import 'package:whooing_transaction_maker/whooing_signin_page.dart';
 
@@ -9,54 +11,49 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   _showMainPage(BuildContext context) =>
-      Navigator.pushNamed(context, '/insert');
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
 
-  _showSignInPage(BuildContext context) {
-    // if(!isAuthed)
-    print('tempToken = ${WhooingAuth().tempToken}');
-    if (WhooingAuth().tempToken.isNotEmpty) {
-      Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      WhooingSigninPage(WhooingAuth().tempToken)))
-          .then((value) => _checkStatus(value));
-    } else {
-      print('not yet');
-    }
+  _showSignInWebPage(BuildContext context, String token) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => WhooingSigninPage(token)));
   }
 
-  void _checkStatus(bool isNeedRefresh) {
-    if(!isNeedRefresh)
-      return;
+  @override
+  void initState() {
+    super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<SigninStatusModel>(context, listen: true).addListener(() {
+        _checkStatus(context);
+      });
+
+      _checkStatus(context);
+    });
+  }
+
+  void _checkStatus(BuildContext context) {
     // TODO : move this in the view model
-    if (!WhooingAuth().isAuthed) {
-      print('WhooingAuth status ${WhooingAuth().status.toString()}');
-      switch (WhooingAuth().status) {
-        case SigninStatus.not:
-          WhooingAuth().fetchToken();
-          break;
-        case SigninStatus.gotTempToken:
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      WhooingSigninPage(WhooingAuth().tempToken)));
-          break;
-        case SigninStatus.signined:
-          WhooingAuth().fetchAccessToken();
-          break;
-        case SigninStatus.gotAccessToken:
-          break;
-      }
+    print(
+        'WhooingAuth status ${Provider.of<SigninStatusModel>(context, listen: false).status.toString()}');
+
+    switch (Provider.of<SigninStatusModel>(context, listen: false).status) {
+      case SigninStatus.NotSignedIn:
+        WhooingAuth().prepareSignIn(context);
+        break;
+      case SigninStatus.NeedSignInPage:
+        _showSignInWebPage(context, WhooingAuth().tempToken);
+        break;
+      case SigninStatus.SignInInProgress:
+        WhooingAuth().completeSignIn(context);
+        break;
+      case SigninStatus.SignedIn:
+        _showMainPage(context);
+        break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    _checkStatus(true);
-
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         body: Center(
@@ -71,17 +68,15 @@ class _SplashPageState extends State<SplashPage> {
                     fontSize: 50,
                     fontWeight: FontWeight.w300,
                   )),
+              Text("status = ${Provider.of<SigninStatusModel>(context).msg}",
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 30,
+                    fontWeight: FontWeight.w300,
+                  )),
               RaisedButton(
                 onPressed: () => _showMainPage(context),
                 child: const Text('Next',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    )),
-              ),
-              RaisedButton(
-                onPressed: () => _showSignInPage(context),
-                child: const Text('WebView',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,

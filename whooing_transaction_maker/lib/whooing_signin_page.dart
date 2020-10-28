@@ -49,8 +49,8 @@ class _WhooingSigninPageState extends State<WhooingSigninPage> {
                 pin = request.url.substring(startPos, endPos);
               }
 
-              WhooingAuth().setPin(pin);
-              Navigator.pop(context, true);
+              WhooingAuth().setPin(context, pin);
+              Navigator.pop(context);
               return NavigationDecision.prevent;
             }
             
