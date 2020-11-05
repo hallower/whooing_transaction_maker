@@ -1,35 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:whooing_transaction_maker/models/insert_state_model.dart';
 
-Widget getInsertPage() {
+final ItemScrollController insertLeftListController = ItemScrollController();
+final ItemScrollController insertRightListController = ItemScrollController();
+
+Widget getInsertPage(BuildContext context) {
   return Column(
-
     children: [
-      Expanded(flex: 5, child: __upperSection()),
+      Expanded(flex: 5, child: __upperSection(context)),
       Column(children: [
-        __middleSection(),
+        __middleSection(context),
         Container(
-          height: 300,
-          child: __lowerSection(),
+          height: 200,
+          child: __lowerSection(context),
         )
       ]),
     ],
   );
 }
 
-Widget __upperSection() {
+Widget __upperSection(BuildContext context) {
   return Row(
     children: [
       Expanded(
         flex: 6,
         child: ListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: entries.length,
+          itemCount: Provider.of<InsertStateModel>(context).monthlyItems.length,
           shrinkWrap: true,
           itemBuilder: (BuildContext context, int index) {
-            return Container(
-              child: Center(child: Text(entries[index])),
-            );
+            return GestureDetector(
+                child: Center(
+                    child: Text(
+                  Provider.of<InsertStateModel>(context)
+                      .monthlyItems[index]
+                      .title,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w300,
+                  ),
+                )),
+                onTap: () {
+                  Provider.of<InsertStateModel>(context)
+                      .setMonthlyItemIndex(index);
+                }
+                /*
+  => Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(index.toString()),
+                  duration: const Duration(milliseconds: 500),
+                ))*/
+                );
           },
         ),
       ),
@@ -44,8 +67,18 @@ Widget __upperSection() {
                     fontWeight: FontWeight.w300,
                   )),
               TextFormField(
-                  decoration: InputDecoration(
+                  /*decoration: InputDecoration(
                       border: InputBorder.none, hintText: 'Enter price'),
+
+                   */
+                  initialValue: (Provider.of<InsertStateModel>(context)
+                              .selectedMonthlyItemIndex !=
+                          -1)
+                      ? Provider.of<InsertStateModel>(context)
+                          .monthlyItems[Provider.of<InsertStateModel>(context)
+                              .selectedMonthlyItemIndex]
+                          .money
+                      : "0",
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
@@ -68,7 +101,7 @@ Widget __upperSection() {
   );
 }
 
-Widget __middleSection() {
+Widget __middleSection(BuildContext context) {
   return Row(children: [
     Expanded(
         flex: 5,
@@ -91,31 +124,73 @@ Widget __middleSection() {
   ]);
 }
 
-Widget __lowerSection() {
+Widget __lowerSection(BuildContext context) {
   return Row(
     children: [
       Expanded(
         flex: 5,
-        child: ListView.builder(
+        child: ScrollablePositionedList.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: left.length,
-          shrinkWrap: true,
+          itemCount: Provider.of<InsertStateModel>(context).leftAccounts.length,
+          itemScrollController: insertLeftListController,
           itemBuilder: (BuildContext context, int index) {
+            var selectedIndex = Provider.of<InsertStateModel>(context)
+                .selectedLeftAccountItemIndex;
+
+            if (selectedIndex == -1 || selectedIndex != index)
+              return Container(
+                child: Center(
+                    child: Text(Provider.of<InsertStateModel>(context)
+                        .leftAccounts[index]
+                        .title)),
+              );
+
             return Container(
-              child: Center(child: Text(left[index])),
+              child: Center(
+                  child: Text(
+                      Provider.of<InsertStateModel>(context)
+                          .leftAccounts[index]
+                          .title,
+                      style: TextStyle(
+                        color: Colors.red[500],
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ))),
             );
           },
         ),
       ),
       Expanded(
         flex: 5,
-        child: ListView.builder(
+        child: ScrollablePositionedList.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: right.length,
-          shrinkWrap: true,
+          itemCount:
+              Provider.of<InsertStateModel>(context).rightAccounts.length,
+          itemScrollController: insertRightListController,
           itemBuilder: (BuildContext context, int index) {
+            var selectedIndex = Provider.of<InsertStateModel>(context)
+                .selectedRightAccountItemIndex;
+
+            if (selectedIndex == -1 || selectedIndex != index)
+              return Container(
+                child: Center(
+                    child: Text(Provider.of<InsertStateModel>(context)
+                        .rightAccounts[index]
+                        .title)),
+              );
+
             return Container(
-              child: Center(child: Text(right[index])),
+              child: Center(
+                child: Text(
+                    Provider.of<InsertStateModel>(context)
+                        .rightAccounts[index]
+                        .title,
+                    style: TextStyle(
+                      color: Colors.blue[500],
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    )),
+              ),
             );
           },
         ),
@@ -123,110 +198,3 @@ Widget __lowerSection() {
     ],
   );
 }
-
-
-
-final List entries = [
-  '우리ISA',
-  '영어수업비',
-  '식사',
-  '용돈',
-  '전자제품',
-  '옷',
-  '책',
-  '병원',
-  '주유',
-  '우리ISA',
-  '영어수업비',
-  '식사',
-  '용돈',
-  '전자제품',
-  '옷',
-  '책',
-  '병원',
-  '주유',
-  '우리ISA',
-  '영어수업비',
-  '식사',
-  '용돈',
-  '전자제품',
-  '옷',
-  '책',
-  '병원',
-  '주유',
-  '우리ISA',
-  '영어수업비',
-  '식사',
-  '용돈',
-  '전자제품',
-  '옷',
-  '책',
-  '병원',
-  '주유',
-];
-final List left = [
-  '생활비',
-  '식료품',
-  '대여료',
-  '통신비',
-  '의료비',
-  '경조사비',
-  '선물',
-  '용돈',
-  '교육비',
-  '지식비',
-  '레져비',
-  '외식비',
-  '공과금',
-  '생활비',
-  '식료품',
-  '대여료',
-  '통신비',
-  '의료비',
-  '경조사비',
-  '선물',
-  '용돈',
-  '교육비',
-  '지식비',
-  '레져비',
-  '외식비',
-  '공과금',
-];
-final List right = [
-  '우리은행',
-  '하나은행',
-  '새마을금고',
-  '국민은행',
-  '삼성증권',
-  '신한금융투자',
-  '카뱅',
-  'SC은행',
-  'NH농협',
-  '우리은행',
-  '하나은행',
-  '새마을금고',
-  '국민은행',
-  '삼성증권',
-  '신한금융투자',
-  '카뱅',
-  'SC은행',
-  'NH농협',
-  '우리은행',
-  '하나은행',
-  '새마을금고',
-  '국민은행',
-  '삼성증권',
-  '신한금융투자',
-  '카뱅',
-  'SC은행',
-  'NH농협',
-  '우리은행',
-  '하나은행',
-  '새마을금고',
-  '국민은행',
-  '삼성증권',
-  '신한금융투자',
-  '카뱅',
-  'SC은행',
-  'NH농협',
-];

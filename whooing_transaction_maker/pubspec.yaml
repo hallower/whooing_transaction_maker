@@ -33,6 +33,7 @@ dependencies:
   webview_flutter:
   http:
   crypto:
+  scrollable_positioned_list:
 
 
 dev_dependencies:

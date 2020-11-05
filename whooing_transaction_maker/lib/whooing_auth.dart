@@ -25,6 +25,7 @@ class WhooingAuth {
   String _tokenSecret;
   String userID;
   Random _rnd = Random();
+  Map<String, String> _headers;
 
   factory WhooingAuth() {
     return _instance;
@@ -36,12 +37,16 @@ class WhooingAuth {
     _token = "";
     _tokenSecret = "";
     userID = "";
+    _headers = {
+      "X-API-KEY": getXapiKey(),
+      "Content-Type": 'application/x-www-form-urlencoded',
+    };
   }
 
   String _getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  String _xapiKey() =>
+  String getXapiKey() =>
       "app_id=$appID,token=$_token,nounce=${_getRandomString(10)},timestamp=${DateTime.now().millisecondsSinceEpoch},signiture=${sha1.convert(utf8.encode('$asozmqpMVi|$_tokenSecret'))}";
 
   Future<bool> prepareSignIn(BuildContext context) async {
@@ -51,12 +56,8 @@ class WhooingAuth {
     }
 
     String params = "app_id=" + appID + "&app_secret=" + asozmqpMVi;
-    Map<String, String> headers = {
-      "X-API-KEY": _xapiKey(),
-      "Content-Type": 'application/x-www-form-urlencoded',
-    };
     final response =
-        await http.post(urlRequestToken, headers: headers, body: params);
+        await http.post(urlRequestToken, headers: _headers, body: params);
     if (response.statusCode == 200) {
       print(response.body);
 
@@ -86,12 +87,7 @@ class WhooingAuth {
     }
 
     String params = "app_id=$appID&app_secret=$asozmqpMVi&token=$tempToken&pin=$_pin";
-    Map<String, String> headers = {
-      "X-API-KEY": _xapiKey(),
-      "Content-Type": 'application/x-www-form-urlencoded',
-    };
-    final response =
-    await http.post(urlAccessToken, headers: headers, body: params);
+    final response = await http.post(urlAccessToken, headers: _headers, body: params);
     if (response.statusCode == 200) {
       print(response.body);
 
