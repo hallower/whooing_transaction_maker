@@ -34,6 +34,7 @@ dependencies:
   http:
   crypto:
   scrollable_positioned_list:
+  intl:
 
 
 dev_dependencies:

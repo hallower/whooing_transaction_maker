@@ -4,29 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:whooing_transaction_maker/models/account_item.dart';
+import 'package:whooing_transaction_maker/models/entry_item.dart';
 import 'package:whooing_transaction_maker/models/monthly_item.dart';
 import 'package:whooing_transaction_maker/models/insert_state_model.dart';
 import 'package:whooing_transaction_maker/whooing_auth.dart';
 
-class WhooingInsertDataProvider {
+class WhooingInsertData {
   final urlDefaultSection = "https://whooing.com/api/sections/default.json";
   final urlAllAccounts = "https://whooing.com/api/accounts.json_array";
   final urlMonthlyItems = "https://whooing.com/api/monthly_items.json_array";
+  final urlEntryItem = "https://whooing.com/api/entries.json";
 
-  String _sectionID;
+
   Map<String, String> _headers;
 
-  WhooingInsertDataProvider() {
-    _sectionID = "";
+  WhooingInsertData() {
+    print("WhooingInsertData()");
     _headers = {
       "X-API-KEY": WhooingAuth().getXapiKey(),
       "Content-Type": 'application/x-www-form-urlencoded',
     };
   }
 
+  String _getSectionID(context) => Provider.of<InsertStateModel>(context).sectionID;
+  void _setSectionID(context,id) => Provider.of<InsertStateModel>(context).setSectionID(id);
+
   Future<bool> getDefaultSection(BuildContext context) async {
 
-    if(_sectionID.isNotEmpty)
+    if(_getSectionID(context).isNotEmpty)
       return true;
 
     final response = await http.get(urlDefaultSection, headers: _headers);
@@ -34,8 +39,8 @@ class WhooingInsertDataProvider {
       print(response.body);
 
       final body = jsonDecode(response.body);
-      _sectionID = body["results"]["section_id"];
-      print("section ID = $_sectionID");
+      _setSectionID(context, body["results"]["section_id"]);
+      print("section ID = ${_getSectionID(context)}");
 
       // TODO : remove
       getAllAccount(context);
@@ -49,39 +54,10 @@ class WhooingInsertDataProvider {
   }
 
   Future<bool> getAllAccount(BuildContext context) async {
-    String params = "?section_id=$_sectionID";
+    String params = "?section_id=${_getSectionID(context)}";
 
     final response = await http.get(urlAllAccounts + params, headers: _headers);
     if (response.statusCode == 200) {
-      /*
-      "results" : {
-        "assets" : {
-            "x1" : {
-            "account_id" : "x1",
-            "type" : "group",
-            "title" : "유동자산",
-            "memo" : "바로쓸 수 있는 것들",
-            "open_date" : 20090511,
-            "close_date" : 20160101,
-            "category" : "",
-            },
-            "x2" : {
-              "account_id" : "x2",
-              "type" : "account",
-              "title" : "현금",
-              "memo" : "내 지갑 및 서랍에 있는 돈",
-              "open_date" : 20090511,
-              "close_date" : 20160101,
-              "category" : "normal",
-            }
-        },
-        "liabilities" : {
-        },
-        "income" : {
-        },
-        "expenses" : {
-        }
-       */
       final body = jsonDecode(response.body);
       List<AccountItem> items = new List();
       var result = body["results"];
@@ -108,7 +84,7 @@ class WhooingInsertDataProvider {
   }
 
   Future<bool> getMonthlyItems(BuildContext context) async {
-    String params = "?section_id=$_sectionID";
+    String params = "?section_id=${_getSectionID(context)}";
 
     final response =
         await http.get(urlMonthlyItems + params, headers: _headers);
@@ -174,4 +150,32 @@ class WhooingInsertDataProvider {
       return false;
     }
   }
+
+  Future<bool> postTransaction(BuildContext context, EntryItem item) async {
+
+    // TODO : special character encode
+    var entryJson = jsonEncode(item.toJson());
+    String params = "section_id=${_getSectionID(context)}&data_type=json&entries=[$entryJson]";
+
+    print("section ID = ${_getSectionID(context)}");
+
+    print("params--------------------------------------------");
+    print(params);
+    print("params--------------------------------------------");
+
+    final response =
+    await http.post(urlEntryItem, headers: _headers, body: params);
+    if (response.statusCode == 200) {
+
+      final body = jsonDecode(response.body);
+      print(body["results"]);
+
+      return true;
+    } else {
+      print(
+          "Fetch token is failed!!!, [${response.statusCode}] ${response.body}");
+      return false;
+    }
+  }
+
 }

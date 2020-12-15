@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:whooing_transaction_maker/models/account_item.dart';
 import 'package:whooing_transaction_maker/models/monthly_item.dart';
 
 class InsertStateModel extends ChangeNotifier {
+  String sectionID = "";
+
   List<MonthlyItem> monthlyItems = List();
 
   Map<String, AccountItem> accountItems = Map();  // TODO : Is this required?
@@ -13,6 +14,22 @@ class InsertStateModel extends ChangeNotifier {
   int selectedMonthlyItemIndex = -1;
   int selectedLeftAccountItemIndex = -1;
   int selectedRightAccountItemIndex = -1;
+
+  DateTime date = DateTime.now();
+
+  void setSectionID(id) {
+      sectionID = id;
+  }
+
+  void plusDate() {
+    date.add(Duration(days:1));
+    notifyListeners();
+  }
+
+  void minusDate() {
+    date.add(Duration(days:-1));
+    notifyListeners();
+  }
 
   void setMonthlyItems(List<MonthlyItem> items) {
     if (items.length == 0) {

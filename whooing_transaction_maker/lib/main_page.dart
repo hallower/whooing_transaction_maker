@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whooing_transaction_maker/whooing_insert_data_provider.dart';
-import 'package:whooing_transaction_maker/whooing_insert_data_provider.dart';
+import 'package:whooing_transaction_maker/whooing_list_data.dart';
+import 'models/list_state_model.dart';
+import 'whooing_insert_data.dart';
 import 'insert_page.dart';
 import 'list_page.dart';
 import 'models/insert_state_model.dart';
@@ -11,10 +12,12 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
+//enum TabTitle { InsertTab, ListTab, SettingsTab}
+
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  WhooingInsertDataProvider wdp = WhooingInsertDataProvider();
+  final WhooingInsertData wdp = WhooingInsertData();
 
   @override
   void initState() {
@@ -30,51 +33,44 @@ class _MainPageState extends State<MainPage> {
   Widget _getPage(BuildContext context) {
     print("get page $_selectedIndex");
     switch (_selectedIndex) {
-      case 0:
+      case 0://TabTitle.InsertTab:
         return getInsertPage(context);
-      case 1:
+      case 1://TabTitle.ListTab:
         return getListPage(context);
-      case 2:
+      case 2://TabTitle.SettingsTab:
         return Text('Settings');
     }
     return Text('Oops');
   }
 
-  void handleWidgetsAfterBuild() {
-    var leftIndex = Provider
-        .of<InsertStateModel>(context)
-        .selectedLeftAccountItemIndex;
-    var rightIndex = Provider
-        .of<InsertStateModel>(context)
-        .selectedRightAccountItemIndex;
+  void _handleWidgetsAfterBuild() {
 
-    print("Widget positioning, left=$leftIndex, right=$rightIndex");
-    if (leftIndex != -1)
-      insertLeftListController.scrollTo(index: leftIndex, duration: Duration(milliseconds: 500));
+    switch (_selectedIndex) {
+      case 0://TabTitle.InsertTab:
+        {
+          var leftIndex = Provider
+              .of<InsertStateModel>(context)
+              .selectedLeftAccountItemIndex;
+          var rightIndex = Provider
+              .of<InsertStateModel>(context)
+              .selectedRightAccountItemIndex;
 
-    if (rightIndex != -1)
-      insertRightListController.scrollTo(index: rightIndex, duration: Duration(milliseconds: 500));
-  }
+          print("Widget positioning, left=$leftIndex, right=$rightIndex");
+          if (leftIndex != -1)
+            insertLeftListController.scrollTo(index: leftIndex, duration: Duration(milliseconds: 500));
 
-  @override
-  Widget build(BuildContext context) {
-    wdp.getDefaultSection(context);
+          if (rightIndex != -1)
+            insertRightListController.scrollTo(index: rightIndex, duration: Duration(milliseconds: 500));
+        }
+        break;
+      case 1://TabTitle.ListTab:
 
-    print("build main page!!!");
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      handleWidgetsAfterBuild();
-    });
-
-
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        title: Text("Insert Page"),
-      ),
-      body: _getPage(context),
-      bottomNavigationBar: _makeBottomNavigationBar(),
-    );
+        if(Provider.of<ListStateModel>(context).notInitialized)
+          WhooingListData().getEntries(context);
+        break;
+      case 2://TabTitle.SettingsTab:
+        break;
+    }
   }
 
   Widget _makeBottomNavigationBar() {
@@ -96,5 +92,26 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    wdp.getDefaultSection(context);
+
+    print("build main page!!!");
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _handleWidgetsAfterBuild();
+    });
+
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        title: Text("Insert Page"),
+      ),
+      body: _getPage(context),
+      bottomNavigationBar: _makeBottomNavigationBar(),
+    );
   }
 }
