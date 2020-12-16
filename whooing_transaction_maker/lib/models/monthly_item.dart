@@ -54,7 +54,7 @@ class MonthlyItem {
   Map<String, dynamic> toJson() => {
         'item_id': id,
         'item': title,
-        'money': int.parse(money),
+        'money': double.parse(money),
         'l_account': leftAccountTitle,
         'l_account_id': leftAccountID,
         'r_account': rightAccountTitle,

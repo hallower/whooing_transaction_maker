@@ -7,7 +7,7 @@ class InsertStateModel extends ChangeNotifier {
 
   List<MonthlyItem> monthlyItems = List();
 
-  Map<String, AccountItem> accountItems = Map();  // TODO : Is this required?
+  Map<String, AccountItem> accountItems = Map(); // TODO : Is this required?
   List<AccountItem> leftAccounts = List();
   List<AccountItem> rightAccounts = List();
 
@@ -18,16 +18,16 @@ class InsertStateModel extends ChangeNotifier {
   DateTime date = DateTime.now();
 
   void setSectionID(id) {
-      sectionID = id;
+    sectionID = id;
   }
 
   void plusDate() {
-    date.add(Duration(days:1));
+    date.add(Duration(days: 1));
     notifyListeners();
   }
 
   void minusDate() {
-    date.add(Duration(days:-1));
+    date.add(Duration(days: -1));
     notifyListeners();
   }
 
@@ -85,22 +85,45 @@ class InsertStateModel extends ChangeNotifier {
 
     selectedMonthlyItemIndex = index;
 
-    print("Selected Monthly Item = ${monthlyItems[selectedMonthlyItemIndex].title}, ${monthlyItems[selectedMonthlyItemIndex].money}");
+    print(
+        "Selected Monthly Item = ${monthlyItems[selectedMonthlyItemIndex].title}, ${monthlyItems[selectedMonthlyItemIndex].money}");
 
-    for(int i = 0; i<leftAccounts.length;i++){
-      if(leftAccounts[i].id == monthlyItems[selectedMonthlyItemIndex].leftAccountID){
+    for (int i = 0; i < leftAccounts.length; i++) {
+      if (leftAccounts[i].id ==
+          monthlyItems[selectedMonthlyItemIndex].leftAccountID) {
         selectedLeftAccountItemIndex = i;
         break;
       }
     }
 
-    for(int i = 0; i<rightAccounts.length;i++){
-      if(rightAccounts[i].id == monthlyItems[selectedMonthlyItemIndex].rightAccountID){
+    for (int i = 0; i < rightAccounts.length; i++) {
+      if (rightAccounts[i].id ==
+          monthlyItems[selectedMonthlyItemIndex].rightAccountID) {
         selectedRightAccountItemIndex = i;
         break;
       }
     }
 
+    notifyListeners();
+  }
+
+  void setLeftItemIndex(int index) {
+    if (index < 0 || index >= leftAccounts.length) {
+      print(
+          "Invalid left item index = $index, current list size is = ${leftAccounts.length}");
+      return;
+    }
+    selectedLeftAccountItemIndex = index;
+    notifyListeners();
+  }
+
+  void setRightItemIndex(int index) {
+    if (index < 0 || index >= rightAccounts.length) {
+      print(
+          "Invalid left item index = $index, current list size is = ${rightAccounts.length}");
+      return;
+    }
+    selectedRightAccountItemIndex = index;
     notifyListeners();
   }
 }

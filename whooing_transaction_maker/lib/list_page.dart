@@ -6,6 +6,7 @@ import 'package:whooing_transaction_maker/whooing_list_data.dart';
 import 'models/insert_state_model.dart';
 import 'models/list_state_model.dart';
 
+final int limitOfAcountTitle = 6;
 final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
     new GlobalKey<RefreshIndicatorState>();
 // TODO : Remove this, do not do like this.
@@ -64,7 +65,9 @@ Widget getListPage(BuildContext context) {
                                           Radius.circular(5.0)),
                                     ), //             <--- BoxDecoration here
                                     child: Text(
-                                      "${Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title}",
+                                      "${(Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title.length>limitOfAcountTitle)?
+                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title.substring(0,limitOfAcountTitle):
+                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title}",
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300,
@@ -79,7 +82,9 @@ Widget getListPage(BuildContext context) {
                                           Radius.circular(5.0)),
                                     ), //             <--- BoxDecoration here
                                     child: Text(
-                                      "${Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title}",
+                                      "${(Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title.length>limitOfAcountTitle)?
+                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title.substring(0,limitOfAcountTitle):
+                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title}",
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300,

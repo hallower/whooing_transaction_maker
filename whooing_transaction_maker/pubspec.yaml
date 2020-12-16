@@ -35,6 +35,7 @@ dependencies:
   crypto:
   scrollable_positioned_list:
   intl:
+  flutter_masked_text: ^0.7.0
 
 
 dev_dependencies:

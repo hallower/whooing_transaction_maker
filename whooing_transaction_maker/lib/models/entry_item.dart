@@ -49,9 +49,9 @@ class EntryItem {
     result.putIfAbsent('r_account_id', () => rightAccountID);
     result.putIfAbsent('r_account', () => rightAccountTitle);
     result.putIfAbsent('item', () => title); //Utf8Encoder().convert(title));
-    result.putIfAbsent('money', () => int.parse(money));
+    result.putIfAbsent('money', () => double.parse(money));
     if (total.isNotEmpty)
-      result.putIfAbsent('total', () => int.parse(total));
+      result.putIfAbsent('total', () => double.parse(total));
     if (memo.isNotEmpty)
       result.putIfAbsent('memo', () => memo); //Utf8Encoder().convert(memo),
     if (appID.isNotEmpty)
