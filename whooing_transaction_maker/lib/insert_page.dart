@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -12,9 +13,8 @@ import 'models/account_item.dart';
 final ItemScrollController insertLeftListController = ItemScrollController();
 final ItemScrollController insertRightListController = ItemScrollController();
 // TODO : dispose
-final textControlItemPrice = TextEditingController();
-
-int testIdx = 0;
+final textControlItemPrice =
+    TextEditingController(); //MoneyMaskedTextController(decimalSeparator: '.', thousandSeparator: ',')
 
 Widget getInsertPage(BuildContext context) {
   return Column(
@@ -38,7 +38,7 @@ Widget __upperSection(BuildContext context) {
               .monthlyItems[Provider.of<InsertStateModel>(context)
                   .selectedMonthlyItemIndex]
               .money
-          : "0";
+          : "";
 
   return Row(
     children: [
@@ -56,7 +56,7 @@ Widget __upperSection(BuildContext context) {
                     decoration: BoxDecoration(
                       border: Border.all(width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ), //             <--- BoxDecoration here
+                    ),
                     child: Center(
                         child: Text(
                       Provider.of<InsertStateModel>(context)
@@ -84,7 +84,7 @@ Widget __upperSection(BuildContext context) {
                   decoration: BoxDecoration(
                     border: Border.all(width: 1.0),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ), //             <--- BoxDecoration here
+                  ),
                   child: Text(
                       new DateFormat.MMMMd()
                           .format(Provider.of<InsertStateModel>(context).date),
@@ -99,7 +99,7 @@ Widget __upperSection(BuildContext context) {
                   decoration: BoxDecoration(
                     border: Border.all(width: 1.0),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ), //             <--- BoxDecoration here
+                  ),
                   child: TextFormField(
                     /*decoration: InputDecoration(
                       border: InputBorder.none, hintText: 'Enter price'),
@@ -116,11 +116,12 @@ Widget __upperSection(BuildContext context) {
                     : "0",
                 */
                     keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.-]')),
                     ],
                     style: TextStyle(
-                      fontSize: 35,
+                      fontSize: 32,
                       fontWeight: FontWeight.w800,
                     ),
                     controller: textControlItemPrice,
@@ -129,7 +130,12 @@ Widget __upperSection(BuildContext context) {
                 onPressed: () async {
                   // TODO : test
 
-                  // TODO : money check
+                  if (textControlItemPrice.text.isEmpty ||
+                      textControlItemPrice.text.compareTo("0") == 0) {
+                    // TODO : toast
+                    print("Invalid Price!!!");
+                    return;
+                  }
 
                   var leftItemIndex = Provider.of<InsertStateModel>(context)
                       .selectedLeftAccountItemIndex;
@@ -207,6 +213,7 @@ Widget __middleSection(BuildContext context) {
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
+              color: Colors.grey[400],
               border: Border.all(width: 1.0),
               borderRadius: BorderRadius.all(Radius.circular(15.0)),
             ),
@@ -223,6 +230,7 @@ Widget __middleSection(BuildContext context) {
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.all(10.0),
             decoration: BoxDecoration(
+              color: Colors.grey[400],
               border: Border.all(width: 1.0),
               borderRadius: BorderRadius.all(Radius.circular(15.0)),
             ),
@@ -249,8 +257,16 @@ Widget __lowerSection(BuildContext context) {
             var selectedIndex = Provider.of<InsertStateModel>(context)
                 .selectedLeftAccountItemIndex;
 
-            if (selectedIndex == -1 || selectedIndex != index)
-              return Container(
+            var selectedStyle = (selectedIndex == -1 || selectedIndex != index)
+                ? null
+                : TextStyle(
+                    color: Colors.red[500],
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  );
+
+            return GestureDetector(
+              child: Container(
                 child: Container(
                     margin: const EdgeInsets.all(2.0),
                     padding: const EdgeInsets.all(4.0),
@@ -259,29 +275,15 @@ Widget __lowerSection(BuildContext context) {
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
                     child: Center(
-                        child: Text(Provider.of<InsertStateModel>(context)
-                            .leftAccounts[index]
-                            .title))),
-              );
-
-            return Container(
-              child: Container(
-                  margin: const EdgeInsets.all(2.0),
-                  padding: const EdgeInsets.all(4.0),
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1.0),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                  child: Center(
-                      child: Text(
-                          Provider.of<InsertStateModel>(context)
-                              .leftAccounts[index]
-                              .title,
-                          style: TextStyle(
-                            color: Colors.red[500],
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          )))),
+                        child: Text(
+                            Provider.of<InsertStateModel>(context)
+                                .leftAccounts[index]
+                                .title,
+                            style: selectedStyle))),
+              ),
+              onTap: () {
+                Provider.of<InsertStateModel>(context).setLeftItemIndex(index);
+              },
             );
           },
         ),
@@ -297,8 +299,16 @@ Widget __lowerSection(BuildContext context) {
             var selectedIndex = Provider.of<InsertStateModel>(context)
                 .selectedRightAccountItemIndex;
 
-            if (selectedIndex == -1 || selectedIndex != index)
-              return Container(
+            var selectedStyle = (selectedIndex == -1 || selectedIndex != index)
+                ? null
+                : TextStyle(
+                    color: Colors.blue[500],
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  );
+
+            return GestureDetector(
+              child: Container(
                 margin: const EdgeInsets.all(2.0),
                 padding: const EdgeInsets.all(4.0),
                 decoration: BoxDecoration(
@@ -308,28 +318,12 @@ Widget __lowerSection(BuildContext context) {
                 child: Center(
                     child: Text(Provider.of<InsertStateModel>(context)
                         .rightAccounts[index]
-                        .title)),
-              );
-
-            return Container(
-              child: Container(
-                margin: const EdgeInsets.all(2.0),
-                padding: const EdgeInsets.all(4.0),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-                child: Center(
-                    child: Text(
-                        Provider.of<InsertStateModel>(context)
-                            .rightAccounts[index]
-                            .title,
-                        style: TextStyle(
-                          color: Colors.blue[500],
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ))),
+                        .title,
+                    style:selectedStyle)),
               ),
+              onTap: () {
+                Provider.of<InsertStateModel>(context).setRightItemIndex(index);
+              },
             );
           },
         ),
