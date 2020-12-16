@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:whooing_transaction_maker/settings_page.dart';
 import 'package:whooing_transaction_maker/whooing_list_data.dart';
 import 'models/list_state_model.dart';
 import 'whooing_insert_data.dart';
@@ -38,7 +39,7 @@ class _MainPageState extends State<MainPage> {
       case 1://TabTitle.ListTab:
         return getListPage(context);
       case 2://TabTitle.SettingsTab:
-        return Text('Settings');
+        return getSettingsPage(context);
     }
     return Text('Oops');
   }

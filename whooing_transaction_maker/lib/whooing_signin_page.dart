@@ -22,6 +22,12 @@ class _WhooingSigninPageState extends State<WhooingSigninPage> {
   _WhooingSigninPageState(this._tempToken);
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // We're using a Builder here so we have a context that is below the Scaffold

@@ -26,4 +26,9 @@ class SigninStatusModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void signOut(){
+    status = SigninStatus.NotSignedIn;
+    msg = SigninStatusMsg[status];
+  }
+
 }

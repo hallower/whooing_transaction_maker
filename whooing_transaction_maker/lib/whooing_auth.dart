@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
 import 'package:crypto/crypto.dart';
@@ -13,6 +14,7 @@ class WhooingAuth {
 
   final _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+
   final appID = "";
   final asozmqpMVi = "";
 
@@ -43,6 +45,19 @@ class WhooingAuth {
     };
   }
 
+  void clearAuthInfo () async
+  {
+    tempToken = "";
+    _pin = "";
+    _token = "";
+    _tokenSecret = "";
+
+    // delete stored token
+    final storage = new FlutterSecureStorage();
+    await storage.delete(key: "csk_token");
+    await storage.delete(key: "csk_token_secret");
+  }
+
   String _getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
@@ -52,6 +67,18 @@ class WhooingAuth {
   Future<bool> prepareSignIn(BuildContext context) async {
     if (Provider.of<SigninStatusModel>(context).status == SigninStatus.SignedIn) {
       print("Already Authed!!!");
+      return true;
+    }
+
+    // check stored token
+    final storage = new FlutterSecureStorage();
+    _token = await storage.read(key: "csk_token");
+    _tokenSecret = await storage.read(key: "csk_token_secret");
+
+    if(_token !=null && _tokenSecret!=null &&
+        _token.isNotEmpty && _tokenSecret.isNotEmpty){
+      print("already signed in, token is stored");
+      Provider.of<SigninStatusModel>(context).changeStatus(SigninStatus.SignedIn);
       return true;
     }
 
@@ -100,7 +127,9 @@ class WhooingAuth {
 
       Provider.of<SigninStatusModel>(context).changeStatus(SigninStatus.SignedIn);
 
-      // TODO : store token to secure storage
+      final storage = new FlutterSecureStorage();
+      await storage.write(key: "csk_token", value: _token);
+      await storage.write(key: "csk_token_secret", value: _tokenSecret);
 
       // TODO : get user information, sections
 

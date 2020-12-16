@@ -6,7 +6,7 @@ import 'models/signin_state_model.dart';
 import 'models/transaction_make_model.dart';
 import 'splash_page.dart';
 import 'main_page.dart';
-import 'whooing_signin_page.dart';
+
 
 void main() {
   runApp(MultiProvider(

@@ -30,12 +30,15 @@ dependencies:
   cupertino_icons: ^0.1.3
 
   provider: ^3.0.0
-  webview_flutter:
-  http:
-  crypto:
-  scrollable_positioned_list:
-  intl:
+  webview_flutter: #^1.0.7
+  http: ^0.12.2
+  crypto: ^2.1.5
+  scrollable_positioned_list: ^0.1.8
+  intl: ^0.16.1
   flutter_masked_text: ^0.7.0
+  flutter_secure_storage: ^3.3.5
+  settings_ui: ^0.5.0
+  shared_preferences:
 
 
 dev_dependencies:

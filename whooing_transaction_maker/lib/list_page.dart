@@ -92,7 +92,9 @@ Widget getListPage(BuildContext context) {
                                     )),
                               ]),
                           Text(
-                            "${(Provider.of<ListStateModel>(context).entryItems[index].title.length > 6) ? Provider.of<ListStateModel>(context).entryItems[index].title.substring(0, 6) : Provider.of<ListStateModel>(context).entryItems[index].title}",
+                            "${(Provider.of<ListStateModel>(context).entryItems[index].title.length > 6) ?
+                            Provider.of<ListStateModel>(context).entryItems[index].title.substring(0, 6) :
+                            Provider.of<ListStateModel>(context).entryItems[index].title}",
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w300,
