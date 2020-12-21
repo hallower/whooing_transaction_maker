@@ -14,7 +14,7 @@ BuildContext _context;
 
 Future<void> _refresh() {
   return new Future.delayed(Duration.zero, () {
-    WhooingListData().getEntries(_context);
+    WhooingListData().getEntriesOf3Days(_context);
   });
 }
 

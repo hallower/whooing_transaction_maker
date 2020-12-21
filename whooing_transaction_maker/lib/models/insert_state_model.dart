@@ -31,6 +31,11 @@ class InsertStateModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDate(DateTime date){
+    this.date = date;
+    notifyListeners();
+  }
+
   void setMonthlyItems(List<MonthlyItem> items) {
     if (items.length == 0) {
       print("Given Monthly item list is empty!!!");

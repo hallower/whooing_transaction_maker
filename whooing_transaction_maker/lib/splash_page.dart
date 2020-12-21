@@ -62,26 +62,18 @@ class _SplashPageState extends State<SplashPage> {
           height: 400,
           child: Column(
             children: [
-              Text('Splash test!!!!',
+              Text('Whooing Transaction Maker',
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 50,
+                    fontSize: 32,
                     fontWeight: FontWeight.w300,
                   )),
-              Text("status = ${Provider.of<SigninStatusModel>(context).msg}",
+              Text("(${Provider.of<SigninStatusModel>(context).msg})",
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 30,
+                    fontSize: 24,
                     fontWeight: FontWeight.w300,
                   )),
-              RaisedButton(
-                onPressed: () => _showMainPage(context),
-                child: const Text('Next',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    )),
-              ),
             ],
           ),
         )));

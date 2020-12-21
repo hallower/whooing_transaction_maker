@@ -27,12 +27,17 @@ class WhooingListData {
   String _getSectionID(context) => Provider.of<InsertStateModel>(context).sectionID;
   void _setSectionID(context,id) => Provider.of<InsertStateModel>(context).setSectionID(id);
 
-  Future<bool> getEntries(BuildContext context) async {
+  Future<bool> getEntriesOf3Days(BuildContext context) async {
+    return getEntries(context, 3);
+  }
+
+
+  Future<bool> getEntries(BuildContext context, int days) async {
     // TODO : date argument
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyyMMdd');
     var endDate = formatter.format(now);
-    var startDate = formatter.format(new DateTime(now.year, now.month, now.day-1));
+    var startDate = formatter.format(new DateTime(now.year, now.month, now.day-days));
 
     String params = "?section_id=${_getSectionID(context)}&start_date=$startDate&end_date=$endDate";
 

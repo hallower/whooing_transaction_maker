@@ -62,12 +62,9 @@ class WhooingInsertData {
       List<AccountItem> items = new List();
       var result = body["results"];
       result.forEach((key, value){
-        print("Account type = $key");
-
         value.forEach((account){
           var parsedAccount = AccountItem.fromJson(account);
           parsedAccount.classification = key;
-          print(" - Account = ${parsedAccount.title}");
 
           if(parsedAccount.title.isNotEmpty)
             items.add(parsedAccount);
@@ -130,12 +127,7 @@ class WhooingInsertData {
         if(key.toString().startsWith("slot")){
           // slot
           value.forEach((item) {
-            // item in slot
-            print("item = $item");
-            // TODO : remove
             var parsedItem = MonthlyItem.fromJson(item);
-            print("pared = ${parsedItem.title}!!");
-
             if(parsedItem.title.isNotEmpty)
               items.add(parsedItem);
           });

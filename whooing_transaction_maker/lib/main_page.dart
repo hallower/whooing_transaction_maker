@@ -67,7 +67,7 @@ class _MainPageState extends State<MainPage> {
       case 1://TabTitle.ListTab:
 
         if(Provider.of<ListStateModel>(context).notInitialized)
-          WhooingListData().getEntries(context);
+          WhooingListData().getEntriesOf3Days(context);
         break;
       case 2://TabTitle.SettingsTab:
         break;

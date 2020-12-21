@@ -85,13 +85,26 @@ Widget __upperSection(BuildContext context) {
                     border: Border.all(width: 1.0),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
-                  child: Text(
-                      new DateFormat.MMMMd()
-                          .format(Provider.of<InsertStateModel>(context).date),
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 20,
-                        fontWeight: FontWeight.w300,
+                  child: GestureDetector(
+                      onTap: () async {
+                        final DateTime picked = await showDatePicker(
+                          context: context,
+                          initialDate: Provider.of<InsertStateModel>(context)
+                              .date,
+                          firstDate: DateTime(DateTime.now().year - 1),
+                          lastDate: DateTime(DateTime.now().year + 10),
+                        );
+                        if (picked != null && picked != Provider.of<InsertStateModel>(context).date)
+                          Provider.of<InsertStateModel>(context).setDate(picked);
+                      },
+                      child: Text(
+                        new DateFormat.MMMMd().format(
+                            Provider.of<InsertStateModel>(context).date),
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 20,
+                          fontWeight: FontWeight.w300,
+                        ),
                       ))),
               Container(
                   margin: const EdgeInsets.all(4.0),
@@ -128,7 +141,6 @@ Widget __upperSection(BuildContext context) {
                   )),
               RaisedButton(
                 onPressed: () async {
-                  // TODO : test
 
                   if (textControlItemPrice.text.isEmpty ||
                       textControlItemPrice.text.compareTo("0") == 0) {
@@ -159,15 +171,15 @@ Widget __upperSection(BuildContext context) {
                   AccountItem rightItem = Provider.of<InsertStateModel>(context)
                       .leftAccounts[rightItemIndex];
 
-                  var now = new DateTime.now();
+
                   var formatter = new DateFormat('yyyyMMdd');
-                  var today = formatter.format(now);
+                  var day = formatter.format(Provider.of<InsertStateModel>(context).date);
 
                   // TODO : change this
                   // TODO : special character check
                   EntryItem testItem = EntryItem(
                       "",
-                      today,
+                      day,
                       leftItem.id,
                       leftItem.classification,
                       rightItem.id,
@@ -316,10 +328,11 @@ Widget __lowerSection(BuildContext context) {
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 ),
                 child: Center(
-                    child: Text(Provider.of<InsertStateModel>(context)
-                        .rightAccounts[index]
-                        .title,
-                    style:selectedStyle)),
+                    child: Text(
+                        Provider.of<InsertStateModel>(context)
+                            .rightAccounts[index]
+                            .title,
+                        style: selectedStyle)),
               ),
               onTap: () {
                 Provider.of<InsertStateModel>(context).setRightItemIndex(index);
