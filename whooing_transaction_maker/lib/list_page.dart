@@ -21,6 +21,28 @@ Future<void> _refresh() {
 Widget getListPage(BuildContext context) {
   _context = context;
 
+  print(
+      "Transaction item count = ${Provider.of<ListStateModel>(context).entryItems.length}");
+
+  if (Provider.of<ListStateModel>(context).entryItems.length == 0) {
+    return Center(
+        child: Container(
+            margin: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.all(4.0),
+            decoration: BoxDecoration(
+              border: Border.all(width: 1.0),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+            child: Text(
+              "No transactions",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w300,
+              ),
+            )),
+      );
+  }
+
   return Column(
     children: [
       Expanded(
@@ -40,7 +62,7 @@ Widget getListPage(BuildContext context) {
                     decoration: BoxDecoration(
                       border: Border.all(width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ), //             <--- BoxDecoration here
+                    ),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -63,11 +85,9 @@ Widget getListPage(BuildContext context) {
                                       border: Border.all(width: 1.0),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5.0)),
-                                    ), //             <--- BoxDecoration here
+                                    ),
                                     child: Text(
-                                      "${(Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title.length>limitOfAcountTitle)?
-                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title.substring(0,limitOfAcountTitle):
-                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title}",
+                                      "${(Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title.length > limitOfAcountTitle) ? Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title.substring(0, limitOfAcountTitle) : Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].leftAccountID].title}",
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300,
@@ -80,11 +100,9 @@ Widget getListPage(BuildContext context) {
                                       border: Border.all(width: 1.0),
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5.0)),
-                                    ), //             <--- BoxDecoration here
+                                    ),
                                     child: Text(
-                                      "${(Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title.length>limitOfAcountTitle)?
-                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title.substring(0,limitOfAcountTitle):
-                                      Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title}",
+                                      "${(Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title.length > limitOfAcountTitle) ? Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title.substring(0, limitOfAcountTitle) : Provider.of<InsertStateModel>(context).accountItems[Provider.of<ListStateModel>(context).entryItems[index].rightAccountID].title}",
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w300,
@@ -92,9 +110,7 @@ Widget getListPage(BuildContext context) {
                                     )),
                               ]),
                           Text(
-                            "${(Provider.of<ListStateModel>(context).entryItems[index].title.length > 6) ?
-                            Provider.of<ListStateModel>(context).entryItems[index].title.substring(0, 6) :
-                            Provider.of<ListStateModel>(context).entryItems[index].title}",
+                            "${(Provider.of<ListStateModel>(context).entryItems[index].title.length > 6) ? Provider.of<ListStateModel>(context).entryItems[index].title.substring(0, 6) : Provider.of<ListStateModel>(context).entryItems[index].title}",
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w300,
@@ -110,7 +126,7 @@ Widget getListPage(BuildContext context) {
                                     border: Border(
                                         bottom: BorderSide(
                                             color: Colors.black, width: 2.0)),
-                                  ), //             <--- BoxDecoration here
+                                  ),
                                   child: Text(
                                     "${Provider.of<ListStateModel>(context).entryItems[index].money}",
                                     style: TextStyle(

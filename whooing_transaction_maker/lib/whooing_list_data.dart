@@ -31,8 +31,8 @@ class WhooingListData {
     return getEntries(context, 3);
   }
 
-
   Future<bool> getEntries(BuildContext context, int days) async {
+
     // TODO : date argument
     var now = new DateTime.now();
     var formatter = new DateFormat('yyyyMMdd');

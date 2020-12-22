@@ -9,11 +9,14 @@ class ListStateModel extends ChangeNotifier {
   int selectedEntryItemIndex = -1;
 
   void setEntries(List<EntryItem> items) {
-    notInitialized = false;
+    print("setEntries!!!");
     if (items.length == 0) {
       print("Given Monthly item list is empty!!!");
       return;
     }
+
+    // To be refreshed whenever entry item is zero
+    notInitialized = false;
 
     entryItems = items;
     notifyListeners();

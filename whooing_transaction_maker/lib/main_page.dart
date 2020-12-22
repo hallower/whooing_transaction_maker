@@ -65,9 +65,10 @@ class _MainPageState extends State<MainPage> {
         }
         break;
       case 1://TabTitle.ListTab:
-
-        if(Provider.of<ListStateModel>(context).notInitialized)
+        if(Provider.of<ListStateModel>(context).notInitialized) {
+          print("List Tab is not initialized");
           WhooingListData().getEntriesOf3Days(context);
+        }
         break;
       case 2://TabTitle.SettingsTab:
         break;

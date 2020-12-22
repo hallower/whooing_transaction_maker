@@ -65,13 +65,14 @@ class _SplashPageState extends State<SplashPage> {
               Text('Whooing Transaction Maker',
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 32,
-                    fontWeight: FontWeight.w300,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
                   )),
+              Spacer(),
               Text("(${Provider.of<SigninStatusModel>(context).msg})",
                   style: TextStyle(
                     color: Colors.grey[500],
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.w300,
                   )),
             ],
